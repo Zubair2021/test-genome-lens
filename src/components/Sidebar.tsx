@@ -3,10 +3,11 @@ import { FileUp, Plus, Download, Dna, AlignLeft } from 'lucide-react'
 import Button from './ui/Button'
 import { useProjectStore } from '@/stores/projectStore'
 import { parseFASTA, parseGenBank, exportToFASTA, exportToGenBank } from '@/utils/parsers'
+import { parseCLUSTAL, parseFASTAAlignment, parseStockholm, parseMAF } from '@/utils/alignmentParsers'
 import { Sequence } from '@/types'
 
 export default function Sidebar() {
-  const { currentProject, selectedSequenceId, selectSequence, addSequence, setView } = useProjectStore()
+  const { currentProject, selectedSequenceId, selectSequence, addSequence, setView, addAlignment } = useProjectStore()
   const [activeTab, setActiveTab] = useState<'sequences' | 'alignments'>('sequences')
 
   const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,6 +54,33 @@ export default function Sidebar() {
       updatedAt: Date.now(),
     }
     addSequence(newSeq)
+  }
+
+  const handleImportAlignment = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    const content = await file.text()
+    let alignment = null
+
+    // Try different alignment formats
+    if (file.name.endsWith('.aln') || file.name.endsWith('.clustal')) {
+      alignment = parseCLUSTAL(content)
+    } else if (file.name.endsWith('.sto') || file.name.endsWith('.stockholm')) {
+      alignment = parseStockholm(content)
+    } else if (file.name.endsWith('.maf')) {
+      alignment = parseMAF(content)
+    } else if (file.name.endsWith('.fasta') || file.name.endsWith('.fa')) {
+      alignment = parseFASTAAlignment(content)
+    }
+
+    if (alignment) {
+      alignment.name = file.name.replace(/\.[^/.]+$/, '')
+      addAlignment(alignment)
+      setView('alignment')
+    }
+
+    e.target.value = ''
   }
 
   return (
@@ -140,7 +168,7 @@ export default function Sidebar() {
               >
                 <p className="font-medium text-sm">{aln.name}</p>
                 <p className="text-xs text-gray-500">
-                  {aln.sequences.length} sequences
+                  {aln.sequences.length} sequences × {aln.sequences[0]?.sequence.length || 0} bp
                 </p>
               </div>
             ))}
@@ -178,6 +206,20 @@ export default function Sidebar() {
               />
             </label>
           </>
+        )}
+        {activeTab === 'alignments' && (
+          <label className="block">
+            <span className="flex h-8 w-full items-center justify-center rounded-md bg-primary-600 text-white hover:bg-primary-700 px-3 text-sm font-medium transition-colors cursor-pointer">
+              <FileUp className="w-4 h-4 mr-1" />
+              Import Alignment
+            </span>
+            <input
+              type="file"
+              className="hidden"
+              accept=".aln,.clustal,.sto,.stockholm,.maf,.fasta,.fa"
+              onChange={handleImportAlignment}
+            />
+          </label>
         )}
       </div>
     </div>

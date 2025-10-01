@@ -3,10 +3,14 @@ import { Info, Tag, BarChart } from 'lucide-react'
 import Button from './ui/Button'
 import { useProjectStore } from '@/stores/projectStore'
 import { calculateGC } from '@/utils/sequence'
+import GCContentViewer from './analysis/GCContentViewer'
+import ORFViewer from './analysis/ORFViewer'
+import RestrictionViewer from './analysis/RestrictionViewer'
 
 export default function Inspector() {
   const { currentProject, selectedSequenceId } = useProjectStore()
   const [activeTab, setActiveTab] = useState<'info' | 'features' | 'analysis'>('info')
+  const [analysisView, setAnalysisView] = useState<'gc' | 'orf' | 'restriction'>('gc')
 
   const selectedSequence = currentProject?.sequences.find(s => s.id === selectedSequenceId)
 
@@ -114,11 +118,35 @@ export default function Inspector() {
           </div>
         )}
 
-        {activeTab === 'analysis' && (
+        {activeTab === 'analysis' && selectedSequence && (
           <div className="space-y-4">
-            <p className="text-sm text-gray-500 text-center py-8">
-              Analysis tools coming soon
-            </p>
+            <div className="flex gap-1 border-b border-gray-200 pb-2">
+              <Button
+                variant={analysisView === 'gc' ? 'primary' : 'ghost'}
+                size="sm"
+                onClick={() => setAnalysisView('gc')}
+              >
+                GC Content
+              </Button>
+              <Button
+                variant={analysisView === 'orf' ? 'primary' : 'ghost'}
+                size="sm"
+                onClick={() => setAnalysisView('orf')}
+              >
+                ORFs
+              </Button>
+              <Button
+                variant={analysisView === 'restriction' ? 'primary' : 'ghost'}
+                size="sm"
+                onClick={() => setAnalysisView('restriction')}
+              >
+                Restriction
+              </Button>
+            </div>
+
+            {analysisView === 'gc' && <GCContentViewer sequence={selectedSequence} />}
+            {analysisView === 'orf' && <ORFViewer sequence={selectedSequence} />}
+            {analysisView === 'restriction' && <RestrictionViewer sequence={selectedSequence} />}
           </div>
         )}
       </div>
