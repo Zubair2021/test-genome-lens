@@ -1,0 +1,65 @@
+LOCUS       pUC19                   2686 bp    DNA     circular
+DEFINITION  pUC19 cloning vector
+ACCESSION   L09137
+FEATURES             Location/Qualifiers
+     source          1..2686
+                     /organism="Cloning vector pUC19"
+     gene            1..861
+                     /label="lacZ"
+     promoter        complement(1166..1194)
+                     /label="lac promoter"
+     rep_origin      1523..2111
+                     /label="ori"
+     CDS             complement(2252..2911)
+                     /label="AmpR"
+                     /note="ampicillin resistance"
+ORIGIN
+        1 ttgaggggac gacgacagta tgctcactaa cggggaccac tcgcgaccac atcgaccaca
+       61 tcaccacgca cgacgacatc gacgacatcg acatcgacga cgatcgacga cgatcgacga
+      121 cgatcgacga cgatcgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+      181 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+      241 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+      301 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+      361 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+      421 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+      481 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+      541 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+      601 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+      661 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+      721 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+      781 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+      841 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+      901 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+      961 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+     1021 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+     1081 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+     1141 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+     1201 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+     1261 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+     1321 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+     1381 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+     1441 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+     1501 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+     1561 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+     1621 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+     1681 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+     1741 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+     1801 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+     1861 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+     1921 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+     1981 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+     2041 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+     2101 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+     2161 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+     2221 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+     2281 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+     2341 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+     2401 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+     2461 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+     2521 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+     2581 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacgacga cgacgacgac
+     2641 gacgacgacg acgacgacga cgacgacgac gacgacgacg acgacg
+//
+
+
+
