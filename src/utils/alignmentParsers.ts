@@ -291,3 +291,4 @@ export function calculateAlignmentStats(alignment: Alignment): AlignmentStats {
   }
 }
 
+

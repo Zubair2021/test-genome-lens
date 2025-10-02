@@ -233,6 +233,95 @@ export function exportToFASTA(sequences: Sequence[]): string {
   }).join('\n\n')
 }
 
+// EMBL Parser
+export function parseEMBL(content: string): ParseResult {
+  const sequences: Sequence[] = []
+  const entries = content.split('//').filter(e => e.trim())
+
+  for (const entry of entries) {
+    const lines = entry.split('\n')
+    let id = ''
+    let description = ''
+    let sequenceData = ''
+    const features: Feature[] = []
+
+    for (const line of lines) {
+      if (line.startsWith('ID')) {
+        id = line.split(/\s+/)[1] || 'Unnamed'
+      } else if (line.startsWith('DE')) {
+        description += line.substring(5).trim() + ' '
+      } else if (line.startsWith('FT')) {
+        const featureLine = line.substring(5)
+        const match = featureLine.match(/^(\S+)\s+(\d+)\.\.(\d+)/)
+        if (match) {
+          const [, type, start, end] = match
+          features.push({
+            id: crypto.randomUUID(),
+            name: type,
+            type: (type as FeatureType) || 'misc_feature',
+            start: parseInt(start) - 1,
+            end: parseInt(end) - 1,
+            strand: 'forward',
+          })
+        }
+      } else if (line.startsWith('SQ') || line.startsWith('  ')) {
+        const seqMatch = line.match(/[a-zA-Z]+/g)
+        if (seqMatch) {
+          sequenceData += seqMatch.join('').toUpperCase()
+        }
+      }
+    }
+
+    if (id && sequenceData) {
+      sequences.push({
+        id: crypto.randomUUID(),
+        name: id,
+        description: description.trim() || undefined,
+        type: guessSequenceType(sequenceData),
+        sequence: sequenceData.replace(/\s/g, ''),
+        features,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      })
+    }
+  }
+
+  return { sequences }
+}
+
+// Parse CSV annotations
+export function parseCSVAnnotations(content: string, _sequenceId: string): Feature[] {
+  const features: Feature[] = []
+  const lines = content.split('\n')
+  
+  // Skip header if present
+  const startLine = lines[0]?.includes('name') || lines[0]?.includes('Name') ? 1 : 0
+  
+  for (let i = startLine; i < lines.length; i++) {
+    const line = lines[i].trim()
+    if (!line) continue
+    
+    // Parse: name,type,start,end,strand,color,notes
+    const parts = line.split(',').map(p => p.trim())
+    if (parts.length < 4) continue
+    
+    const [name, type, startStr, endStr, strand, color, notes] = parts
+    
+    features.push({
+      id: crypto.randomUUID(),
+      name: name || 'Unnamed',
+      type: (type as FeatureType) || 'misc_feature',
+      start: parseInt(startStr) - 1, // Convert to 0-indexed
+      end: parseInt(endStr) - 1,
+      strand: (strand as Strand) || 'forward',
+      color: color || undefined,
+      notes: notes || undefined,
+    })
+  }
+  
+  return features
+}
+
 // Export to GenBank (simplified)
 export function exportToGenBank(sequence: Sequence): string {
   const lines: string[] = []
@@ -274,6 +363,34 @@ export function exportToGenBank(sequence: Sequence): string {
   lines.push('//')
   return lines.join('\n')
 }
+
+// Export to GFF3
+export function exportToGFF3(sequence: Sequence): string {
+  const lines: string[] = []
+  
+  lines.push('##gff-version 3')
+  lines.push(`##sequence-region ${sequence.name} 1 ${sequence.sequence.length}`)
+  
+  for (const feature of sequence.features) {
+    const attrs = `ID=${feature.id};Name=${feature.name}`
+    const strandSymbol = feature.strand === 'reverse' ? '-' : '+'
+    
+    lines.push([
+      sequence.name,
+      'GenomeLens',
+      feature.type,
+      feature.start + 1, // Convert to 1-indexed
+      feature.end + 1,
+      '.',
+      strandSymbol,
+      '.',
+      attrs
+    ].join('\t'))
+  }
+  
+  return lines.join('\n')
+}
+
 
 
 

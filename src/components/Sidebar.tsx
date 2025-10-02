@@ -2,12 +2,12 @@ import { useState } from 'react'
 import { FileUp, Plus, Download, Dna, AlignLeft } from 'lucide-react'
 import Button from './ui/Button'
 import { useProjectStore } from '@/stores/projectStore'
-import { parseFASTA, parseGenBank, exportToFASTA, exportToGenBank } from '@/utils/parsers'
+import { parseFASTA, parseGenBank, parseEMBL, parseCSVAnnotations, exportToFASTA, exportToGenBank, exportToGFF3 } from '@/utils/parsers'
 import { parseCLUSTAL, parseFASTAAlignment, parseStockholm, parseMAF } from '@/utils/alignmentParsers'
 import { Sequence } from '@/types'
 
 export default function Sidebar() {
-  const { currentProject, selectedSequenceId, selectSequence, addSequence, setView, addAlignment } = useProjectStore()
+  const { currentProject, selectedSequenceId, selectSequence, addSequence, setView, addAlignment, addFeature } = useProjectStore()
   const [activeTab, setActiveTab] = useState<'sequences' | 'alignments'>('sequences')
 
   const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,22 +23,49 @@ export default function Sidebar() {
     } else if (file.name.endsWith('.gb') || file.name.endsWith('.gbk')) {
       const result = parseGenBank(content)
       sequences = result.sequences
+    } else if (file.name.endsWith('.embl') || file.name.endsWith('.dat')) {
+      const result = parseEMBL(content)
+      sequences = result.sequences
+    } else if (file.name.endsWith('.csv')) {
+      // CSV is for annotations, need to select target sequence
+      if (selectedSequenceId) {
+        const features = parseCSVAnnotations(content, selectedSequenceId)
+        features.forEach(feature => addFeature(selectedSequenceId, feature))
+      } else {
+        alert('Please select a sequence first to import annotations')
+      }
+      e.target.value = ''
+      return
     }
 
     sequences.forEach(seq => addSequence(seq))
     e.target.value = ''
   }
 
-  const handleExport = (sequence: Sequence, format: 'fasta' | 'genbank') => {
-    const content = format === 'fasta' 
-      ? exportToFASTA([sequence])
-      : exportToGenBank(sequence)
+  const handleExport = (sequence: Sequence, format: 'fasta' | 'genbank' | 'gff3') => {
+    let content: string
+    let extension: string
+
+    switch (format) {
+      case 'fasta':
+        content = exportToFASTA([sequence])
+        extension = 'fasta'
+        break
+      case 'genbank':
+        content = exportToGenBank(sequence)
+        extension = 'gb'
+        break
+      case 'gff3':
+        content = exportToGFF3(sequence)
+        extension = 'gff3'
+        break
+    }
     
     const blob = new Blob([content], { type: 'text/plain' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `${sequence.name}.${format === 'fasta' ? 'fasta' : 'gb'}`
+    a.download = `${sequence.name}.${extension}`
     a.click()
     URL.revokeObjectURL(url)
   }
@@ -201,7 +228,7 @@ export default function Sidebar() {
               <input
                 type="file"
                 className="hidden"
-                accept=".fasta,.fa,.fna,.gb,.gbk"
+                accept=".fasta,.fa,.fna,.gb,.gbk,.embl,.dat,.csv"
                 onChange={handleImport}
               />
             </label>
