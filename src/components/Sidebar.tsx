@@ -5,10 +5,12 @@ import { useProjectStore } from '@/stores/projectStore'
 import { parseFASTA, parseGenBank, parseEMBL, parseCSVAnnotations, exportToFASTA, exportToGenBank, exportToGFF3 } from '@/utils/parsers'
 import { parseCLUSTAL, parseFASTAAlignment, parseStockholm, parseMAF } from '@/utils/alignmentParsers'
 import { Sequence } from '@/types'
+import CreateAlignmentDialog from './dialogs/CreateAlignmentDialog'
 
 export default function Sidebar() {
   const { currentProject, selectedSequenceId, selectSequence, addSequence, setView, addAlignment, addFeature } = useProjectStore()
   const [activeTab, setActiveTab] = useState<'sequences' | 'alignments'>('sequences')
+  const [showCreateAlignment, setShowCreateAlignment] = useState(false)
 
   const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -248,7 +250,15 @@ export default function Sidebar() {
             />
           </label>
         )}
+        {activeTab === 'alignments' && (
+          <Button variant="secondary" size="sm" className="w-full" onClick={() => setShowCreateAlignment(true)}>
+            Create Alignment
+          </Button>
+        )}
       </div>
+      {showCreateAlignment && (
+        <CreateAlignmentDialog onClose={() => setShowCreateAlignment(false)} />
+      )}
     </div>
   )
 }
